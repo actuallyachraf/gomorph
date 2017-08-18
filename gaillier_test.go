@@ -146,6 +146,6 @@ func TestMul(t *testing.T) {
 	result := new(big.Int).SetBytes(decRes)
 	corr := new(big.Int).SetInt64(320)
 	if result.Cmp(corr) != 0 {
-		t.Errorf("Error Add Constant function want %d , got %d", corr, result)
+		t.Errorf("Error Mul function want %d , got %d", corr, result)
 	}
 }
