@@ -139,3 +139,50 @@ func Decrypt(privkey *PrivKey, cipher []byte) ([]byte, error) {
 	return m.Bytes(), nil
 
 }
+
+/*
+	Homomorphic Properties of Paillier Cryptosystem
+
+	* The product of two ciphers decrypts to the sum of the plain text
+	* The product of a cipher with a non-cipher raising g will decrypt to their sum
+	* A Cipher raised to a non-cipher decrypts to their product
+	* Any cipher raised to an integer k will decrypt to the product of the deciphered and k
+*/
+
+//Add two ciphers together
+func Add(pubkey *PubKey, c1, c2 []byte) []byte {
+
+	a := new(big.Int).SetBytes(c1)
+	b := new(big.Int).SetBytes(c2)
+
+	// a * b mod n^²
+	res := new(big.Int).Mod(new(big.Int).Mul(a, b), pubkey.Nsq)
+
+	return res.Bytes()
+}
+
+//Add a constant & a cipher
+func AddConstant(pubkey *PubKey, cipher, constant []byte) []byte {
+
+	c := new(big.Int).SetBytes(cipher)
+	k := new(big.Int).SetBytes(constant)
+
+	//result = c * g^k mod n^2
+	res := new(big.Int).Mod(
+		new(big.Int).Mul(c, new(big.Int).Exp(pubkey.G, k, pubkey.Nsq)), pubkey.Nsq)
+
+	return res.Bytes()
+
+}
+
+//Multiplication by a constant integer
+func Mul(pubkey *PubKey, cipher, constant []byte) []byte {
+
+	c := new(big.Int).SetBytes(cipher)
+	k := new(big.Int).SetBytes(constant)
+
+	//res = c^k mod n^2
+	res := new(big.Int).Exp(c, k, pubkey.Nsq)
+
+	return res.Bytes()
+}
