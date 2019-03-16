@@ -1,5 +1,6 @@
 ## gomorph
 
+Repository is currently maintained by current user (transfer from my old to new account)
 
 **Gomorph** tries to implement a set of Homomorphic Crypto systems in pure Go-lang 
 

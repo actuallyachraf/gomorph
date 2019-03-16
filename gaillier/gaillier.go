@@ -9,6 +9,13 @@
 
 */
 
+//	Homomorphic Properties of Paillier Cryptosystem
+//
+//	* The product of two ciphers decrypts to the sum of the plain text
+//	* The product of a cipher with a non-cipher raising g will decrypt to their sum
+//	* A Cipher raised to a non-cipher decrypts to their product
+//	* Any cipher raised to an integer k will decrypt to the product of the deciphered and k
+
 package gaillier
 
 import (
@@ -20,32 +27,30 @@ import (
 
 //Errors definition
 
-/* The Paillier crypto system picks two keys p & q and denotes n = p*q
-Messages have to be in the ring Z/nZ (integers modulo n)
-Therefore a Message can't be bigger than n
-*/
-var ErrLongMessage = errors.New("Gaillier Error #1: Message is too long for The Public-Key Size \n Message should be smaller than Key size you choose")
-
-//constants
+// The Paillier crypto system picks two keys p & q and denotes n = p*q
+// Messages have to be in the ring Z/nZ (integers modulo n)
+// Therefore a Message can't be bigger than n
+var ErrLongMessage = errors.New("Message is too long for The Public-Key Size \n Message should be smaller than Key size you choose")
 
 var one = big.NewInt(1)
 
-//Key structs
-
+// PubKey is a struct to hold the public key used to encrypt
 type PubKey struct {
-	KeyLen int
-	N      *big.Int //n = p*q (where p & q are two primes)
-	G      *big.Int //g random integer in Z\*\n^2
-	Nsq    *big.Int //N^2
+	Len int
+	N   *big.Int //n = p*q (where p & q are two primes)
+	G   *big.Int //g random integer in Z\*\n^2
+	Nsq *big.Int //N^2
 }
 
+// PrivKey is a struct to hold the private key used to decrypt
 type PrivKey struct {
-	KeyLen int
+	Len int
 	PubKey
 	L *big.Int //lcm((p-1)*(q-1))
 	U *big.Int //L^-1 modulo n mu = U = (L(g^L mod N^2)^-1)
 }
 
+// GenerateKeyPair generates a key pair using a random source and a number of bits
 func GenerateKeyPair(random io.Reader, bits int) (*PubKey, *PrivKey, error) {
 
 	p, err := rand.Prime(random, bits/2)
@@ -64,7 +69,7 @@ func GenerateKeyPair(random io.Reader, bits int) (*PubKey, *PrivKey, error) {
 
 	n := new(big.Int).Mul(p, q)
 
-	nSq := new(big.Int).Mul(n, n)
+	nSquared := new(big.Int).Mul(n, n)
 
 	g := new(big.Int).Add(n, one)
 
@@ -76,20 +81,18 @@ func GenerateKeyPair(random io.Reader, bits int) (*PubKey, *PrivKey, error) {
 	l := new(big.Int).Mul(pMin, qMin)
 	//l^-1 mod n
 	u := new(big.Int).ModInverse(l, n)
-	pub := &PubKey{KeyLen: bits, N: n, Nsq: nSq, G: g}
-	return pub, &PrivKey{PubKey: *pub, KeyLen: bits, L: l, U: u}, nil
+	pub := &PubKey{Len: bits, N: n, Nsq: nSquared, G: g}
+	return pub, &PrivKey{PubKey: *pub, Len: bits, L: l, U: u}, nil
 }
 
-/*
-	Encrypt :function to encrypt the message into a paillier cipher text
-	using the following rule :
-	cipher = g^m * r^n mod n^2
-	* r is random integer such as 0 <= r <= n
-	* m is the message
-*/
+//	Encrypt function to encrypt the message into a paillier cipher text
+//	using the following rule :
+//	cipher = g^m * r^n mod n^2
+//	r is random integer such as 0 <= r <= n
+//	m is the message
 func Encrypt(pubkey *PubKey, message []byte) ([]byte, error) {
 
-	r, err := rand.Prime(rand.Reader, pubkey.KeyLen)
+	r, err := rand.Prime(rand.Reader, pubkey.Len)
 	if err != nil {
 		return nil, err
 	}
@@ -112,13 +115,10 @@ func Encrypt(pubkey *PubKey, message []byte) ([]byte, error) {
 	return c.Bytes(), nil
 }
 
-/*
-	Decrypts a given ciphertext following the rule:
-	m = L(c^lambda mod n^2).mu mod n
-	* lambda : L
-	* mu : U
-
-*/
+//	Decrypts a given ciphertext following the rule:
+//	m = L(c^lambda mod n^2).mu mod n
+//	lambda : L
+//	mu : U
 func Decrypt(privkey *PrivKey, cipher []byte) ([]byte, error) {
 
 	c := new(big.Int).SetBytes(cipher)
@@ -139,15 +139,6 @@ func Decrypt(privkey *PrivKey, cipher []byte) ([]byte, error) {
 	return m.Bytes(), nil
 
 }
-
-/*
-	Homomorphic Properties of Paillier Cryptosystem
-
-	* The product of two ciphers decrypts to the sum of the plain text
-	* The product of a cipher with a non-cipher raising g will decrypt to their sum
-	* A Cipher raised to a non-cipher decrypts to their product
-	* Any cipher raised to an integer k will decrypt to the product of the deciphered and k
-*/
 
 //Add two ciphers together
 func Add(pubkey *PubKey, c1, c2 []byte) []byte {

@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/radicalrafi/gomorph/gaillier"
+	"github.com/actuallyachraf/gomorph/gaillier"
 )
 
 func TestKeyGen(t *testing.T) {
@@ -16,14 +16,14 @@ func TestKeyGen(t *testing.T) {
 	if err1 != nil || err2 != nil || err3 != nil {
 		t.Errorf("Error Generating Keypair :\n Size:1024  %v\nSize:2048  %v\nSize 4096  %v\n", err1, err2, err3)
 	}
-	if puba.KeyLen != 1024 || priva.KeyLen != 1024 {
-		t.Errorf("Error generating correct keypair of size 1024 byte got %d want 1024", puba.KeyLen)
+	if puba.Len != 1024 || priva.Len != 1024 {
+		t.Errorf("Error generating correct keypair of size 1024 byte got %d want 1024", puba.Len)
 	}
-	if pubb.KeyLen != 2048 || privb.KeyLen != 2048 {
-		t.Errorf("Error generating correct keypair of size 1024 byte got %d want 2048", puba.KeyLen)
+	if pubb.Len != 2048 || privb.Len != 2048 {
+		t.Errorf("Error generating correct keypair of size 1024 byte got %d want 2048", puba.Len)
 	}
-	if pubc.KeyLen != 4096 || privc.KeyLen != 4096 {
-		t.Errorf("Error generating correct keypair of size 1024 byte got %d want 4096", puba.KeyLen)
+	if pubc.Len != 4096 || privc.Len != 4096 {
+		t.Errorf("Error generating correct keypair of size 1024 byte got %d want 4096", puba.Len)
 	}
 
 }
