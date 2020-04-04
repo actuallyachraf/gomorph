@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/actuallyachraf/gomorph/gaillier"
+	"gomorph/gaillier"
 )
 
 func TestKeyGen(t *testing.T) {
