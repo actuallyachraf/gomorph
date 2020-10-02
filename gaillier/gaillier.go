@@ -91,8 +91,8 @@ func GenerateKeyPair(random io.Reader, bits int) (*PubKey, *PrivKey, error) {
 //	r is random integer such as 0 <= r <= n
 //	m is the message
 func Encrypt(pubkey *PubKey, message []byte) ([]byte, error) {
-
-	r, err := rand.Prime(rand.Reader, pubkey.Len)
+	// We need to generate an r such that 0 < r < n is true and r and n are relatively prime
+	r, err := generateRelativelyPrimeInt(pubkey.N)
 	if err != nil {
 		return nil, err
 	}
@@ -176,4 +176,26 @@ func Mul(pubkey *PubKey, cipher, constant []byte) []byte {
 	res := new(big.Int).Exp(c, k, pubkey.Nsq)
 
 	return res.Bytes()
+}
+
+// Generates an Int that is relatively prime with the input Int. Relative primeness is defined by gcd(r, n) = 1.
+// So we enter an infinite loop to generate r's until this is true. It is very unlikely that we will ever iterate
+// through this loop more than once since our search space is so large.
+func generateRelativelyPrimeInt(n *big.Int) (*big.Int, error) {
+	for {
+		randR, err := rand.Int(rand.Reader, n)
+		if err != nil {
+			return nil, err
+		}
+
+		// We only care about z here, but need references to x & y because of the GCD function
+		x, y, z := new(big.Int), new(big.Int), new(big.Int)
+		z.GCD(x, y, n, randR)
+
+		// Check that the GCD is 1
+		if z.Cmp(one) == 0 {
+			// If so, we are done
+			return randR, nil
+		}
+	}
 }

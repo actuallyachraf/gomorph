@@ -149,3 +149,16 @@ func TestMul(t *testing.T) {
 		t.Errorf("Error Mul function want %d , got %d", corr, result)
 	}
 }
+
+func BenchmarkEncrypt(b *testing.B) {
+	pubKey, _, _ := GenerateKeyPair(rand.Reader, 2048)
+	val := new(big.Int).SetInt64(int64(1234)).Bytes()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := Encrypt(pubKey, val)
+		if err != nil {
+			b.Fail()
+		}
+	}
+}
