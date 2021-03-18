@@ -15,4 +15,5 @@ Repository is currently maintained by current user (transfer from my old to new 
   howpublished = "https://github.com/actuallyachraf/gomorph",
   month        = "March",
   year         = "2019",
+}
 ```
