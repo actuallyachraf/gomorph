@@ -6,15 +6,13 @@ Repository is currently maintained by current user (transfer from my old to new 
 
 * Gaillier is a Golang implementation of [Paillier Cryptosystem](https://www.wikiwand.com/en/Paillier_cryptosystem)
 
-## Bibtext For citations
+## For citations
 
-```latex
+```
 @MISC {Gomoprh,
   author       = "Achraf B",
-  title        = "Go-morph - a pure Golang implementation of the Paillier cryptosystem.",
+  title        = "Go-morph - a pure Golang implementation of the Paillier cryptosystem",
   howpublished = "https://github.com/actuallyachraf/gomorph",
   month        = "March",
   year         = "2019",
-}
-
 ```
