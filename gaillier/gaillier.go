@@ -30,7 +30,7 @@ import (
 // The Paillier crypto system picks two keys p & q and denotes n = p*q
 // Messages have to be in the ring Z/nZ (integers modulo n)
 // Therefore a Message can't be bigger than n
-var ErrLongMessage = errors.New("Message is too long for The Public-Key Size \n Message should be smaller than Key size you choose")
+var ErrLongMessage = errors.New("message should be smaller than choosen public key size")
 
 var one = big.NewInt(1)
 
