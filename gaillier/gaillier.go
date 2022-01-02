@@ -4,7 +4,7 @@
 	Provides primitives for Public & Private Key Generation /  Encryption / Decryption
 	Provides Functions to operate on the Cyphertext according to Paillier algorithm
 
-	@author: radicalrafi
+	@author: actuallyachraf
 	@license: Apache 2.0
 
 */

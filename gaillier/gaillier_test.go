@@ -159,3 +159,40 @@ func BenchmarkEncrypt(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkAdd(b *testing.B) {
+
+	case1 := new(big.Int).SetInt64(1)
+	case2 := new(big.Int).SetInt64(1)
+
+	pub, priv, err := GenerateKeyPair(rand.Reader, 512)
+
+	if err != nil {
+		b.Errorf("Error Generating Keypair")
+	}
+	//Encrypt
+	encCase1, err1 := Encrypt(pub, case1.Bytes())
+	encCase2, err2 := Encrypt(pub, case2.Bytes())
+
+	if err1 != nil || err2 != nil {
+		b.Errorf("Error Encrypting Integers")
+	}
+	for i := 0; i < b.N; i++ {
+		Add(pub, encCase1, encCase2)
+	}
+	res := Add(pub, encCase1, encCase2)
+
+	corr := new(big.Int).SetInt64(2)
+
+	decRes, err := Decrypt(priv, res)
+	if err != nil {
+		b.Errorf("Failed to Decrypt Result got %v want %v with Error : %v", decRes, corr, err)
+	}
+
+	resB := new(big.Int).SetBytes(decRes)
+
+	if resB.Cmp(corr) != 0 {
+		b.Errorf("Failed to Add two ciphers got %v want %v", resB, corr)
+	}
+
+}
